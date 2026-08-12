@@ -1,38 +1,38 @@
-import asyncio
-
-# Python 3.14 error fix: Pyrogram import hone se pehle event loop banana padta hai
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
-
 import os
-from pyrogram import Client, filters
+import telebot
 
-app = Client("my_bot", bot_token=os.environ.get("BOT_TOKEN"))
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+bot = telebot.TeleBot(BOT_TOKEN)
+
 seen_messages = set()
 
 
-@app.on_message(filters.command("start"))
-async def start_command(client, message):
-    await message.reply_text(
-        "👋 Hello! Main ek Duplicate Message Cleaner Bot hoon.\n\n"
-        "Mujhe group me Admin bana do, duplicate kachra main saaf kar dunga!"
+@bot.message_handler(commands=["start"])
+def send_welcome(message):
+    bot.reply_to(
+        message,
+        "👋 Hello! Main Duplicate Message Cleaner Bot hoon.\n"
+        "Mujhe apne group me Admin bana do, main duplicate messages saaf kar dunga!",
     )
 
 
-@app.on_message(filters.group)
-async def remove_duplicates(client, message):
-    content = message.text or message.caption
-    if content:
-        if content in seen_messages:
-            try:
-                await message.delete()
-            except Exception:
-                pass
-        else:
-            seen_messages.add(content)
+@bot.message_handler(
+    func=lambda message: True, content_types=["text", "photo", "document"]
+)
+def handle_messages(message):
+    if message.chat.type in ["group", "supergroup"]:
+        content = message.text or message.caption
+        if content:
+            if content in seen_messages:
+                try:
+                    bot.delete_message(message.chat.id, message.message_id)
+                except Exception:
+                    pass
+            else:
+                seen_messages.add(content)
 
 
 if __name__ == "__main__":
-    print("Bot start ho raha hai...")
-    app.run()
+    print("Bot Successfully Start Ho Gaya!")
+    bot.infinity_polling()
     

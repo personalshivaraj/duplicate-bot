@@ -11,8 +11,8 @@ seen_messages = set()
 def send_welcome(message):
     bot.reply_to(
         message,
-        "👋 Hello! Main Duplicate Cleaner Bot hoon.\n"
-        "Mujhe Channel ya Group me Admin bana do, main duplicate posts/files auto delete kar dunga!",
+        "👋 Hello! I am your Duplicate Cleaner Bot.\n"
+        "Make me an Admin in your Channel or Group, and I will automatically delete duplicate posts and files!",
     )
 
 
@@ -36,14 +36,11 @@ def handle_group_messages(message):
 
 # Common logic duplicate check aur delete karne ke liye
 def process_duplicate(message):
-    # Text, Photo Caption, ya File Caption check karein
     content = message.text or message.caption
 
-    # Agar file/document hai bina caption ke, toh uski file unique ID check karein
     if not content and message.document:
         content = message.document.file_unique_id
     elif not content and message.photo:
-        # Agar sirf photo hai bina caption ke, toh last (sabse clear) photo ki ID lein
         content = message.photo[-1].file_unique_id
 
     if content:
@@ -57,6 +54,6 @@ def process_duplicate(message):
 
 
 if __name__ == "__main__":
-    print("Bot Successfully Start Ho Gaya!")
+    print("Bot Successfully Started!")
     bot.infinity_polling()
     

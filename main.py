@@ -1,3 +1,4 @@
+import asyncio
 import os
 from pyrogram import Client, filters
 
@@ -18,4 +19,11 @@ async def remove_duplicates(client, message):
             seen_messages.add(content)
 
 
-app.run()
+async def main():
+    async with app:
+        await asyncio.Event().wait()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+    
